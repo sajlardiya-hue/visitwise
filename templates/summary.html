@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Visit prep sheet</h1>
+<h3>Main concern</h3><p>{{ d.concern }}</p>
+<h3>Started</h3><p>{{ d.started }}</p>
+<h3>Better / worse</h3><p>{{ d.factors }}</p>
+<h3>Current medicines</h3><p>{{ d.meds }}</p>
+<h3>My top 3 questions</h3>
+<ol><li>{{ d.q1 }}</li><li>{{ d.q2 }}</li><li>{{ d.q3 }}</li></ol>
+<button onclick="window.print()">Share or print summary</button>
+{% endblock %}

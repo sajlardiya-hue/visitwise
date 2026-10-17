@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block topbar %}
+    <header class="topbar">
+      <a href="/" class="back" aria-label="Back">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+      </a>
+      <span class="topbar-title">Visit prep</span>
+    </header>
+{% endblock %}
+{% block content %}
+<div class="page">
+  <span class="tag tag-green">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v2H9z"/><path d="M9 13l2 2 4-4"/>
+    </svg>
+    BEFORE YOUR VISIT
+  </span>
+
+  <h1 class="page-title">What do you want to talk about?</h1>
+  <p class="muted">Short answers are enough. You can edit them before sharing.</p>
+
+  <ol class="steps">
+    <li class="is-active">1 Symptoms</li>
+    <li class="is-active">2 Medicines</li>
+    <li class="is-active">3 Questions</li>
+  </ol>
+
+  <form method="post" action="/summary">
+    <label for="concern">What’s wrong?</label>
+    <textarea id="concern" name="concern" rows="3"
+      placeholder="ex: Aching pain in my lower back, mostly on the right. About 5 out of 10."></textarea>
+
+    <label for="started">When did it start?</label>
+    <input id="started" name="started" placeholder="ex: October 2, after I lifted a heavy box.">
+
+    <label for="factors">What makes it better or worse?</label>
+    <textarea id="factors" name="factors" rows="3"
+      placeholder="ex: Heat and resting help. Bending and sitting for a long time make it worse."></textarea>
+
+    <label for="meds">What medicines do you take now?</label>
+    <input id="meds" name="meds" placeholder="ex: Cetirizine 10 mg once a day for allergies.">
+    <p class="hint">Include vitamins, supplements, and medicines you buy yourself.</p>
+
+    <label class="check">
+      <input type="checkbox" name="no_allergies">
+      No known medicine allergies
+    </label>
+
+    <div class="section-head">
+      <span>Your top 3 questions</span>
+      <span class="count" id="q-count">0 of 3 added</span>
+    </div>
+    <ol class="q-list">
+        <li data-n="1"><input id="q1" name="q1" placeholder="What is causing the pain?"></li>
+        <li data-n="2"><input id="q2" name="q2" placeholder="What can I do to feel better?"></li>
+        <li data-n="3"><input id="q3" name="q3" placeholder="When can I lift things at work again?"></li>
+    </ol>
+
+    <details class="optional">
+      <summary>Add visit details (optional)</summary>
+      <label for="name">Your name</label>
+      <input id="name" name="name">
+      <label for="doctor">Doctor</label>
+      <input id="doctor" name="doctor" placeholder="Dr. Chen">
+      <label for="visit_type">Type of visit</label>
+      <input id="visit_type" name="visit_type" placeholder="Primary care">
+      <div class="row">
+        <div><label for="visit_date">Date</label><input id="visit_date" type="date" name="visit_date"></div>
+        <div><label for="visit_time">Time</label><input id="visit_time" type="time" name="visit_time"></div>
+      </div>
+    </details>
+
+    <button type="submit">Create my visit summary →</button>
+    <p class="save-note" id="save-note">Only shared when you choose.</p>
+  </form>
+</div>
+
+<script>
+  const form = document.querySelector("form");
+  const KEY = "clearvisit-draft";
+  const note = document.getElementById("save-note");
+  const count = document.getElementById("q-count");
+
+  function updateCount() {
+    const n = ["q1", "q2", "q3"].filter(id => form.elements[id].value.trim()).length;
+    count.textContent = n + " of 3 added";
+  }
+
+  function save() {
+    const data = {};
+    for (const el of form.elements) {
+      if (!el.name) continue;
+      data[el.name] = el.type === "checkbox" ? el.checked : el.value;
+    }
+    try {
+      localStorage.setItem(KEY, JSON.stringify(data));
+      note.textContent = "Only shared when you choose. Saved on this device.";
+    } catch (e) {}
+  }
+
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+    for (const el of form.elements) {
+      if (!(el.name in saved)) continue;
+      if (el.type === "checkbox") el.checked = saved[el.name];
+      else el.value = saved[el.name];
+    }
+  } catch (e) {}
+
+  form.addEventListener("input", () => { updateCount(); save(); });
+  form.addEventListener("change", save);
+  updateCount();
+</script>
+{% endblock %}
