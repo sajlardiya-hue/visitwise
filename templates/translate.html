@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block topbar %}
+<header class="topbar">
+  <a href="/" class="back" aria-label="Back">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M19 12H5M12 19l-7-7 7-7"/>
+    </svg>
+  </a>
+  <span class="topbar-title">Visit translator</span>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="page">
+  <span class="tag tag-green">AFTER YOUR VISIT</span>
+  <h1 class="page-title">Medical words. Everyday meaning.</h1>
+  <p class="muted">Paste your visit notes. We’ll explain what they mean and what to do next.</p>
+
+  <p class="warn"><strong>Prototype.</strong> Use made-up notes only. Do not paste real
+  patient information, names, addresses, or IDs.</p>
+
+  {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+
+  <form method="post" action="/translate" id="translate-form">
+    <label for="notes">Your after-visit notes</label>
+    <textarea id="notes" name="notes" rows="10" maxlength="4000"
+      placeholder="Paste a fictional visit note here.">{{ notes or "" }}</textarea>
+    <button type="submit" id="go">Make this easier to understand ✦</button>
+  </form>
+</div>
+
+<script>
+  document.getElementById("translate-form").addEventListener("submit", function () {
+    const b = document.getElementById("go");
+    b.disabled = true;
+    b.textContent = "Working on it…";
+  });
+</script>
+{% endblock %}
