@@ -8,26 +8,36 @@
       <path d="M19 12H5M12 19l-7-7 7-7"/>
     </svg>
   </a>
-  <span class="topbar-title">My notes</span>
+  <span class="topbar-title">{{ L.topbar_notes }}</span>
 </header>
 {% endblock %}
 
 {% block content %}
 <div class="page">
-  <p class="eyebrow-green">SIMPLIFIED FROM YOUR VISIT NOTES</p>
-  <h1 class="page-title">Here’s what your notes mean.</h1>
+  <p class="eyebrow-green">{{ L.simplified }}</p>
+  {% if L.mt_banner %}<p class="warn">{{ L.mt_banner }}</p>{% endif %}
+  <h1 class="page-title">{{ L.heading }}</h1>
+
+  {% if warnings %}
+  <section class="check" role="alert">
+    <p class="check-title">{{ L.check }}</p>
+    <ul>{% for w in warnings %}<li>{{ w }}</li>{% endfor %}</ul>
+  </section>
+  {% endif %}
 
   <section class="found">
-    <p class="found-label">WHAT THE DOCTOR FOUND</p>
+    <p class="found-label">{{ L.found }}</p>
     {% if r.diagnosis_title %}<h2>{{ r.diagnosis_title }}</h2>{% endif %}
     <p>{{ r.diagnosis_plain }}</p>
     {% if r.diagnosis_original %}
-      <p class="orig">Original term: “{{ r.diagnosis_original }}”</p>
+      <p class="orig">{{ L.orig_term }}: “{{ r.diagnosis_original }}”</p>
     {% endif %}
   </section>
 
+  {% include "_meds.html" %}
+
   <section class="sheet">
-    <h2 class="sheet-title">What to do &amp; when</h2>
+    <h2 class="sheet-title">{{ L.todo }}</h2>
     {% for s in r.what_to_do %}
     <div class="step">
       <span class="step-num">{{ loop.index }}</span>
@@ -41,26 +51,10 @@
     {% if r.follow_up %}<p class="followup">{{ r.follow_up }}</p>{% endif %}
   </section>
 
-  {% if r.emergency_signs %}
-  <section class="alert" role="alert">
-    <p class="alert-title">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-           stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M12 3l10 18H2L12 3z"/><path d="M12 10v4M12 17.5v.5"/>
-      </svg>
-      Get emergency care right away if:
-    </p>
-    <ul>{% for e in r.emergency_signs %}<li>{{ e }}</li>{% endfor %}</ul>
-  </section>
-  {% else %}
-  <section class="alert alert-soft">
-    <p>Your notes didn’t list specific emergency warning signs. If you feel worse or
-    are worried, contact your clinic. In an emergency, call 911.</p>
-  </section>
-  {% endif %}
+  {% include "_emergency.html" %}
 
   {% if r.questions %}
-  <h2 class="ask-title">Questions to ask your doctor</h2>
+  <h2 class="ask-title">{{ L.ask }}</h2>
   <ul class="ask">
     {% for q in r.questions %}
     <li>
@@ -74,15 +68,20 @@
   </ul>
   {% endif %}
 
+  <form method="post" action="/plan" class="plan-form">
+    <input type="hidden" name="data" value="{{ payload }}">
+    <button type="submit">{{ L.open_plan }} ☑</button>
+  </form>
+
   {% if r.unclear_terms %}
   <section class="unclear">
-    <p class="found-label">WORDS WE WEREN’T SURE ABOUT</p>
-    <p>Ask your clinician what these mean: {{ r.unclear_terms|join(", ") }}</p>
+    <p class="found-label">{{ L.unclear_title }}</p>
+    <p>{{ L.unclear_text }}: {{ r.unclear_terms|join(", ") }}</p>
   </section>
   {% endif %}
 
   <details class="original">
-    <summary>See your original notes</summary>
+    <summary>{{ L.see_orig }}</summary>
     <pre>{{ original }}</pre>
   </details>
 

@@ -339,3 +339,49 @@ border-radius: 14px; padding: 14px; }
 .original summary { color: var(--green); font-weight: 600; cursor: pointer; }
 .again { text-align: center; margin: 14px 0 0; }
 .again a { color: var(--green); font-weight: 600; text-decoration: none; }
+
+form label.check-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+  margin: 16px 0 10px;
+}
+form label.check-row input {
+  width: auto;
+  margin: 0;
+  padding: 0;
+}
+form select { width: 100%; padding: 14px; border: 1px solid #dfe5e1;
+  border-radius: 14px; font: inherit; background: white; margin-bottom: 8px; }
+
+  .check { background: white; border: 2px solid #e0b25c; border-radius: 18px;
+    padding: 14px 16px; margin: 16px 0; }
+.check-title { font-weight: 700; margin: 0 0 6px; }
+.check ul { margin: 0; padding-left: 20px; line-height: 1.5; }
+
+.meds { margin: 18px 0; }
+.med { background: #f0f3f0; border-radius: 18px; padding: 16px 18px; margin: 10px 0; }
+.med p { margin: 0; }
+.med-name { font-size: 1.15rem; font-weight: 700; margin-bottom: 4px !important; }
+.med-line { font-size: 1.05rem; }
+.med-limit { font-weight: 700; margin-top: 10px !important; padding-top: 10px;
+        border-top: 1px solid #dfe5e1; }
+.med-note { color: #5d6c72; margin-top: 6px !important; line-height: 1.4; }
+
+.alert-src { font-size: 0.8rem; font-weight: 700; margin: 12px 0 4px; }
+.alert-quote { margin: 4px 0; font-style: italic; line-height: 1.45; }
+
+.plan-hero { background: var(--navy); color: white; padding: 24px 24px 26px;
+        border-radius: 0 0 24px 24px; }
+.plan-hero h1 { font-size: 2rem; font-weight: 600; letter-spacing: -0.02em; margin: 6px 0 10px; }
+.plan-eyebrow { color: #bfe3c9; font-size: 0.75rem; font-weight: 700;
+           letter-spacing: 0.08em; margin: 0; }
+.plan-date { color: #aab8bd; margin: 0 0 6px; }
+.plan-src { color: #bfe3c9; font-size: 0.85rem; margin: 0; }
+
+.plan-form { margin: 22px 0 0; }
+
+@media print {
+.topbar, .plan-form, #share { display: none; }
+}

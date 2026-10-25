@@ -1,0 +1,13 @@
+{% if r.medicines %}
+<section class="meds">
+  <h2 class="sheet-title">{{ L.meds }}</h2>
+  {% for m in r.medicines %}
+  <div class="med">
+    <p class="med-name">{{ m.name }}{% if m.dose %} · {{ m.dose }}{% endif %}</p>
+    {% if m.how_often %}<p class="med-line">{{ m.how_often }}</p>{% endif %}
+    {% if m.limit %}<p class="med-limit">{{ m.limit }}</p>{% endif %}
+    {% if m.instructions %}<p class="med-note">{{ m.instructions }}</p>{% endif %}
+  </div>
+  {% endfor %}
+</section>
+{% endif %}

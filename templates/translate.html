@@ -27,6 +27,12 @@
     <label for="notes">Your after-visit notes</label>
     <textarea id="notes" name="notes" rows="10" maxlength="4000"
       placeholder="Paste a fictional visit note here.">{{ notes or "" }}</textarea>
+        <label for="lang">Explain in</label>
+    <select id="lang" name="lang">
+      <option value="en" {% if lang == "en" %}selected{% endif %}>English</option>
+      <option value="es" {% if lang == "es" %}selected{% endif %}>Español</option>
+      <option value="zh" {% if lang == "zh" %}selected{% endif %}>中文</option>
+    </select>
     <button type="submit" id="go">Make this easier to understand ✦</button>
   </form>
 </div>

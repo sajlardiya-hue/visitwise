@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block topbar %}
+<header class="topbar">
+  <a href="/translate" onclick="history.back(); return false;" class="back" aria-label="Back">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M19 12H5M12 19l-7-7 7-7"/>
+    </svg>
+  </a>
+  <span class="topbar-title">{{ L.topbar_plan }}n</span>
+</header>
+{% endblock %}
+
+{% block content %}
+<header class="plan-hero">
+  <p class="plan-eyebrow">{{ L.next_steps }}</p>
+  <h1>{{ r.diagnosis_title or L.plan_default }}</h1>
+  <p class="plan-date">{{ L.prepared }} {{ today }}</p>
+  <p class="plan-src">{{ L.based_on }} · English</p>
+</header>
+
+<div class="page" id="plan">
+  {% if L.mt_banner %}<p class="warn">{{ L.mt_banner }}</p>{% endif %}
+  {% if warnings %}
+  <section class="check" role="alert">
+    <p class="check-title">{{ L.check }}</p>
+    <ul>{% for w in warnings %}<li>{{ w }}</li>{% endfor %}</ul>
+  </section>
+  {% endif %}
+
+  {% include "_meds.html" %}
+
+  {% for s in r.what_to_do %}
+  <div class="step">
+    <span class="step-num">{{ loop.index }}</span>
+    <div>
+      {% if s.when %}<p class="step-when">{{ s.when|upper }}</p>{% endif %}
+      <p class="step-title">{{ s.title }}</p>
+      <p class="step-details">{{ s.details }}</p>
+    </div>
+  </div>
+  {% endfor %}
+
+  {% if r.follow_up %}
+  <div class="step">
+    <span class="step-num">{{ r.what_to_do|length + 1 }}</span>
+    <div>
+      <p class="step-when">{{ L.followup }}</p>
+      <p class="step-details">{{ r.follow_up }}</p>
+    </div>
+  </div>
+  {% endif %}
+
+  {% include "_emergency.html" %}
+
+  {% if r.questions %}
+  <h2 class="ask-title">{{ L.ask }}</h2>
+  <ul class="ask">
+    {% for q in r.questions %}<li><span>• {{ q }}</span></li>{% endfor %}
+  </ul>
+  {% endif %}
+
+  <div class="actions">
+    <button type="button" id="share">{{ L.share }} ⇪</button>
+  </div>
+</div>
+
+<script>
+  document.getElementById("share").addEventListener("click", function () {
+    const text = document.getElementById("plan").innerText;
+    if (navigator.share) {
+      navigator.share({ title: "My action plan", text: text }).catch(function () {});
+    } else {
+      window.print();
+    }
+  });
+</script>
+{% endblock %}

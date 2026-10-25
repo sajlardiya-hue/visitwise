@@ -1,0 +1,22 @@
+{% if r.emergency_signs or from_notes %}
+<section class="alert" role="alert">
+  <p class="alert-title">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 3l10 18H2L12 3z"/><path d="M12 10v4M12 17.5v.5"/>
+    </svg>
+    {% if r.emergency_signs %}{{ L.emerg }}{% else %}{{ L.warn_notes }}{% endif %}
+  </p>
+  {% if r.emergency_signs %}
+    <ul>{% for e in r.emergency_signs %}<li>{{ e }}</li>{% endfor %}</ul>
+  {% endif %}
+  {% if from_notes %}
+    <p class="alert-src">{{ L.orig_notes }}</p>
+    {% for s in from_notes %}<p class="alert-quote">“{{ s }}”</p>{% endfor %}
+  {% endif %}
+</section>
+{% else %}
+<section class="alert alert-soft">
+  <p>{{ L.no_emerg }}</p>
+</section>
+{% endif %}
