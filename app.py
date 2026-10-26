@@ -205,28 +205,20 @@ def _s(v):
 def _strlist(v):
     return [_s(x) for x in v if _s(x)] if isinstance(v, list) else []
 
-def _cap(s):
-    return s[:1].upper() + s[1:] if s else s
 
 def normalize_result(raw):
     """Make sure the result has every key in the right shape, so pages never crash."""
     if not isinstance(raw, dict):
         raw = {}
     r = {k: _s(raw.get(k)) for k in STR_KEYS}
-    for k in ("diagnosis_title", "diagnosis_plain", "follow_up"):
-        r[k] = _cap(r[k])  # diagnosis_original stays exactly as written
     for k in LIST_KEYS:
         r[k] = _strlist(raw.get(k))
-    for k in ("emergency_signs", "questions"):
-        r[k] = [_cap(x) for x in r[k]]
 
     r["medicines"] = []
     meds = raw.get("medicines")
     for m in meds if isinstance(meds, list) else []:
         if isinstance(m, dict):
             med = {k: _s(m.get(k)) for k in ("name", "dose", "how_often", "limit", "instructions")}
-            for k in ("name", "how_often", "limit", "instructions"):
-                med[k] = _cap(med[k])
             if med["name"]:
                 r["medicines"].append(med)
 
@@ -235,8 +227,6 @@ def normalize_result(raw):
     for s in steps if isinstance(steps, list) else []:
         if isinstance(s, dict):
             step = {k: _s(s.get(k)) for k in ("when", "title", "details")}
-            step["title"] = _cap(step["title"])
-            step["details"] = _cap(step["details"])
             if step["title"] or step["details"]:
                 r["what_to_do"].append(step)
     return r
@@ -289,34 +279,9 @@ def home():
 def prep():
     return render_template("prep.html")
 
-def _pretty_date(value):
-    if not value:
-        return ""
-    try:
-        return datetime.strptime(value, "%Y-%m-%d").strftime("%B %-d, %Y")
-    except ValueError:
-        return value
-
-
-def _pretty_time(value):
-    if not value:
-        return ""
-    try:
-        return datetime.strptime(value, "%H:%M").strftime("%-I:%M %p")
-    except ValueError:
-        return value
-
-
 @app.route("/summary", methods=["POST"])
 def summary():
-    d = request.form.to_dict()
-    d["no_allergies"] = bool(d.get("no_allergies"))
-    return render_template(
-        "summary.html",
-        d=d,
-        pretty_date=_pretty_date(d.get("visit_date")),
-        pretty_time=_pretty_time(d.get("visit_time")),
-    )
+    return render_template("summary.html", d=request.form)
 
 def _build_view(result, original, lang):
     L = LABELS[lang]
