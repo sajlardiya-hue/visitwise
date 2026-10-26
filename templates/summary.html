@@ -1,11 +1,85 @@
 {% extends "base.html" %}
+
+{% block topbar %}
+<header class="topbar">
+  <a href="/prep" class="back" aria-label="Back to visit prep">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M19 12H5M12 19l-7-7 7-7"/>
+    </svg>
+  </a>
+  <span class="topbar-title">Visit summary</span>
+</header>
+{% endblock %}
+
 {% block content %}
-<h1>Visit prep sheet</h1>
-<h3>Main concern</h3><p>{{ d.concern }}</p>
-<h3>Started</h3><p>{{ d.started }}</p>
-<h3>Better / worse</h3><p>{{ d.factors }}</p>
-<h3>Current medicines</h3><p>{{ d.meds }}</p>
-<h3>My top 3 questions</h3>
-<ol><li>{{ d.q1 }}</li><li>{{ d.q2 }}</li><li>{{ d.q3 }}</li></ol>
-<button onclick="window.print()">Share or print summary</button>
+<div class="page">
+  <p class="eyebrow-green">READY FOR YOUR DOCTOR</p>
+  <h1 class="page-title">The important things, all in one place.</h1>
+
+  <section class="sheet" id="sheet">
+    <div class="sheet-head">
+      <h2>Visit prep sheet</h2>
+      <svg class="sheet-icon" width="28" height="28" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="5" y="4" width="14" height="17" rx="2"/>
+        <path d="M9 4h6v2H9z"/>
+        <path d="M9 13l2 2 4-4"/>
+      </svg>
+    </div>
+
+    <p class="who">{{ d.name or "Patient" }} · {{ pretty_date }}</p>
+    <p class="meta">{{ [pretty_time, d.doctor, d.visit_type]|select|join(" · ") }}</p>
+    <span class="pill">Patient-entered information</span>
+
+    <hr>
+
+    <p class="label">MAIN CONCERN</p>
+    <p class="value">{{ d.concern or "Not entered" }}</p>
+
+    <p class="label">STARTED</p>
+    <p class="value">{{ d.started or "Not entered" }}</p>
+
+    <p class="label">WHAT HELPS OR MAKES IT WORSE</p>
+    <p class="value">{{ d.factors or "Not entered" }}</p>
+
+    <hr>
+
+    <p class="label">CURRENT MEDICINES</p>
+    <p class="value">{{ d.meds or "None entered" }}</p>
+    <p class="small">
+      {% if d.no_allergies %}No known medicine allergies.
+      {% elif d.allergies %}Allergies: {{ d.allergies }}
+      {% else %}Allergies: not entered{% endif %}
+    </p>
+
+    <hr>
+
+    <p class="label">MY TOP 3 QUESTIONS</p>
+    <ol class="questions">
+      {% for q in [d.q1, d.q2, d.q3] if q %}
+        <li>{{ q }}</li>
+      {% endfor %}
+    </ol>
+  </section>
+
+  <div class="actions">
+    <button type="button" id="share">Share or print summary ⇪</button>
+    <a class="btn-secondary" href="/prep">Edit my answers ✎</a>
+    <p class="footnote">One-page PDF · Or show this screen at your visit.</p>
+  </div>
+
+  <p class="again"><a href="/">← Back to home</a></p>
+</div>
+
+<script>
+  document.getElementById("share").addEventListener("click", function () {
+    if (navigator.share) {
+      navigator.share({ title: "Visit prep sheet", text: document.getElementById("sheet").innerText })
+        .catch(function () {});
+    } else {
+      window.print();
+    }
+  });
+</script>
 {% endblock %}
